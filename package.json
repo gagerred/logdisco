@@ -1,4 +1,3 @@
-
 {
   "name": "logdisco",
   "version": "0.2.0",
@@ -31,6 +30,9 @@
     "vitest": "^5.1.0"
   },
   "private": true,
+  "engines": {
+    "node": "22.x"
+  },
   "overrides": {
     "@firebase/app": "0.16.6"
   }

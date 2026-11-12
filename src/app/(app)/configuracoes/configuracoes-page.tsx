@@ -131,11 +131,11 @@ function SecaoDiagnostico({ user }: { user: User }) {
     try {
       const token = await user.getIdToken();
       const r = await fetch("/api/me", { headers: { Authorization: `Bearer ${token}` } });
-      const j = await r.json();
+      const j = await r.json().catch(() => null);
       setResultado(
-        r.ok && j.ok
+        r.ok && j?.ok
           ? { ok: true, texto: "O servidor validou seu login e consegue acessar o Firestore." }
-          : { ok: false, texto: j.erro ?? "O servidor respondeu com erro." },
+          : { ok: false, texto: j?.erro ?? `O servidor falhou antes de responder (HTTP ${r.status}). Veja os logs no Vercel.` },
       );
     } catch {
       setResultado({ ok: false, texto: "Não foi possível falar com o servidor." });
