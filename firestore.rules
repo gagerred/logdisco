@@ -1,0 +1,66 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function dono(uid) {
+      return request.auth != null && request.auth.uid == uid;
+    }
+
+    function audicaoValida(d) {
+      return d.releaseId is string
+        && d.date is string
+        && d.time is string
+        && d.listenedAt is timestamp;
+    }
+
+    // Tudo fica dentro de /users/{uid}: cada usuário só enxerga o próprio ramo.
+    match /users/{uid} {
+      allow read, create, update: if dono(uid);
+      allow delete: if false;
+
+      // Álbuns: dados do Discogs são gravados só pelo servidor.
+      // O usuário pode alterar apenas título personalizado e categoria de mídia.
+      match /releases/{id} {
+        allow read: if dono(uid);
+        allow update: if dono(uid)
+          && request.resource.data.diff(resource.data).affectedKeys()
+               .hasOnly(['titleCustom', 'mediaType', 'updatedAt'])
+          && request.resource.data.mediaType in ['CD', 'Vinyl', 'DVD', 'CD/DVD'];
+        allow create, delete: if false;
+      }
+
+      // Artistas: gravados pelo servidor.
+      match /artists/{id} {
+        allow read: if dono(uid);
+        allow write: if false;
+      }
+
+      // Audições: o usuário registra, edita e exclui.
+      match /listens/{id} {
+        allow read, delete: if dono(uid);
+        allow create, update: if dono(uid) && audicaoValida(request.resource.data);
+      }
+
+      // Quero Conhecer: criado pelo servidor (consulta o Discogs); o usuário pode excluir.
+      match /discover/{id} {
+        allow read, delete: if dono(uid);
+        allow create, update: if false;
+      }
+
+      // Gravados só pelo servidor; o usuário apenas lê.
+      match /wantlist/{id}      { allow read: if dono(uid); allow write: if false; }
+      match /syncRuns/{id}      { allow read: if dono(uid); allow write: if false; }
+      match /wantlistRuns/{id}  { allow read: if dono(uid); allow write: if false; }
+
+      // Histórico de alterações: o usuário lê e cria, nunca edita nem apaga.
+      match /changeLog/{id} {
+        allow read, create: if dono(uid);
+        allow update, delete: if false;
+      }
+
+      // Tokens do Discogs e travas de execução: inacessíveis pelo navegador.
+      match /private/{id} { allow read, write: if false; }
+      match /locks/{id}   { allow read, write: if false; }
+    }
+  }
+}

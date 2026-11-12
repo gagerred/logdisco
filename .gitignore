@@ -1,0 +1,14 @@
+node_modules/
+.next/
+out/
+.env
+.env.*
+!.env.example
+*.pem
+*-firebase-adminsdk-*.json
+serviceAccount*.json
+.vercel/
+.firebase/
+*.log
+next-env.d.ts
+tsconfig.tsbuildinfo

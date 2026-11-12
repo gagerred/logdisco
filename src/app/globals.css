@@ -1,0 +1,79 @@
+@import "tailwindcss";
+
+@theme {
+  --color-verde-50: #eef5ef;
+  --color-verde-100: #dbe9de;
+  --color-verde-200: #b9d4bf;
+  --color-verde-500: #3f8f5b;
+  --color-verde-600: #2f7a47;
+  --color-verde-700: #25623a;
+  --color-verde-800: #1d4d2e;
+  --color-verde-900: #143520;
+  --color-verde-950: #0c2315;
+  --color-verm-50: #fdeeee;
+  --color-verm-100: #f9d6d6;
+  --color-verm-600: #b3262b;
+  --color-verm-700: #931e23;
+  --color-papel: #f3f7f2;
+  --color-tinta: #12261a;
+  --font-sans: "Avenir Next", "Segoe UI", "Helvetica Neue", system-ui, sans-serif;
+}
+
+html {
+  color-scheme: light;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--color-papel);
+  color: var(--color-tinta);
+  font-family: var(--font-sans);
+  overflow-x: clip;
+  overflow-wrap: break-word;
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-verm-600);
+  outline-offset: 2px;
+}
+
+@utility btn {
+  @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-60;
+}
+@utility btn-primario {
+  @apply btn bg-verde-800 text-white hover:bg-verde-900;
+}
+@utility btn-perigo {
+  @apply btn bg-verm-600 text-white hover:bg-verm-700;
+}
+@utility btn-contorno {
+  @apply btn border border-verde-200 bg-white text-verde-900 hover:bg-verde-50;
+}
+@utility campo-rotulo {
+  @apply mb-1 block text-sm font-medium text-verde-900;
+}
+@utility campo {
+  @apply min-h-11 w-full rounded-md border border-verde-200 bg-white px-3 py-2 text-base text-tinta placeholder:text-verde-700/60;
+}
+@utility aviso-erro {
+  @apply rounded-md border border-verm-100 bg-verm-50 px-3 py-2 text-sm text-verm-700;
+}
+@utility aviso-ok {
+  @apply rounded-md border border-verde-200 bg-verde-50 px-3 py-2 text-sm text-verde-900;
+}
+@utility painel {
+  @apply rounded-md border border-verde-200 bg-white p-5;
+}
+
+@keyframes giro-inicial {
+  from { transform: rotate(-160deg); }
+  to { transform: rotate(0deg); }
+}
+
+.giro-inicial {
+  animation: giro-inicial 1.6s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .giro-inicial { animation: none; }
+}
