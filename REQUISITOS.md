@@ -19,25 +19,28 @@ Legenda: `[x]` implementado e testado · `[~]` implementado, falta validar com o
 - [x] 3.1 Normalizar R123456 / 123456 / [R123456] (3) — 21 testes unitários
 - [~] 3.2 Leitura de artista, título, faixas, capa, formato, artistas das faixas, link, release e master (3) — conversão testada com dados de exemplo; falta validar com o Discogs real (use "Testar consulta de lançamento"). A gravação no banco é na Etapa 4
 - [x] 3.3 Mapear formato para CD / Vinyl / DVD / CD/DVD (3) — testado; formatos sem correspondência (Cassette, Blu-ray…) ficam para o usuário escolher
-- [ ] 3.3 Formato original somente leitura na edição (4)
+- [x] 3.3 Formato original somente leitura na edição (4) — não há campo de edição e as regras bloqueiam a alteração
 - [~] Vínculo da conta Discogs por OAuth 1.0a (3) — fluxo testado com respostas simuladas; falta validar com o Discogs real
 - [x] Fila que respeita 60 req/min, com tratamento de 429, falha de rede e erros 5xx (3) — testado
 
 ## 4. Tela inicial
 - [ ] Cinco últimas audições por data e horário (5)
-- [ ] 4.1 Pesquisar música — só na página inicial (4/5)
+- [ ] 4.1 Pesquisar música — só na página inicial (5)
 
 ## 5. Coleção
-- [ ] 5.1 Cadastro por código do Discogs, com data de inclusão (4)
-- [ ] 5.2 Tela da coleção: artistas, "Ver todos os artistas/álbuns", Sincronizar, última sincronização (4)
-- [ ] 5.3 Filtros combinados: artista, título, formato, ouvido/nunca ouvido (4)
-- [ ] 5.4 Pesquisa na navbar (4)
-- [ ] 5.5 Página do álbum (4)
-- [ ] 5.6 Edição: título e formato (4)
-- [ ] 5.7 Recarregar informações do Discogs sem tocar nas audições (4)
+- [~] 5.1 Cadastro por código do Discogs, com data de inclusão (4) — servidor testado com banco simulado (duplicados, edições diferentes, categoria obrigatória, reativação); falta validar com Firestore e Discogs reais
+- [~] 5.2 Tela da coleção: artistas, "Ver todos os artistas/álbuns" (4)
+- [ ] 5.2 Botão Sincronizar e indicador da última sincronização (6)
+- [x] 5.3 Filtros combinados: artista, título, formato, ouvido/nunca ouvido (4) — lógica testada; "ouvido/nunca ouvido" passa a ter dados reais com o diário (5)
+- [~] 5.4 Pesquisa na navbar: artista ou título, com capa e formato ao lado do título (4)
+- [~] 5.5 Página do álbum: capa, artista, título, formato, faixas, link do Discogs, data de inclusão (4)
+- [ ] 5.5 Botão "Registrar audição" na página do álbum (5)
+- [~] 5.6 Edição: título e formato; artista não editável (4) — regras do Firestore limitam as edições a esses campos
+- [~] 5.7 Recarregar do Discogs, com prévia das diferenças e confirmação, sem tocar nas audições (4) — testado com banco simulado
 
 ## 6. Artistas
-- [ ] Página do artista: coleção, desejos, link do Discogs (4)
+- [~] Página do artista: álbuns da coleção e link do Discogs (4)
+- [ ] Página do artista: álbuns da lista de desejos (7)
 
 ## 7. Diário de audições
 - [ ] 7.1 Registrar audição (calendário, "Hoje", horário) (5)
@@ -61,7 +64,7 @@ Legenda: `[x]` implementado e testado · `[~]` implementado, falta validar com o
 - [ ] Sortear disco com filtros dos grupos A e B (5)
 
 ## 13–14. Letras e "Various"
-- [ ] Botão de letra por faixa (4) · artista por faixa em álbuns "Various" (4)
+- [~] Botão de letra por faixa (4) · artista por faixa em álbuns "Various" (4)
 
 ## 15–16. CSV, backup e histórico
 - [ ] Exportar e importar CSV com prévia e validação (9)
@@ -69,7 +72,7 @@ Legenda: `[x]` implementado e testado · `[~]` implementado, falta validar com o
 
 ## 17. Navegação
 - [~] Navbar no computador e barra inferior fixa no celular com menu "Mais" (2)
-- [ ] Botão de pesquisa na navbar (4)
+- [~] Botão de pesquisa na navbar (4)
 
 ## 18. Configurações
 - [~] Conta, nome, e-mail, alterar/definir senha, Google continua funcionando (2)
@@ -77,6 +80,9 @@ Legenda: `[x]` implementado e testado · `[~]` implementado, falta validar com o
 - [ ] Últimas atualizações, importação/exportação, backup (6–9)
 
 ## 19–21. Integridade, requisitos técnicos e testes
+- [x] 19.2–19.4 Lançamento único por código de Release; edições diferentes ficam separadas (4) — testado
+- [x] 19.5–19.6 Edição e recarga do Discogs não alteram audições (4) — testado
+- [~] 19.8 / 19.13 Exclusão lógica: reativação preserva histórico (4, testado); fluxo de remoção na sincronização (6)
 - [~] Chaves só no servidor; `.env*` fora do Git (2)
 - [x] Teste unitário das mensagens de erro de login (2)
 - [ ] Testes: cadastro, sincronização, histórico, soft delete, CSV, cron, relatórios, filtros/sorteio, responsividade (3–10)

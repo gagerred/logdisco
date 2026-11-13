@@ -18,5 +18,7 @@ export const NAV_SECUNDARIA: ItemNav[] = [
 ];
 
 export function ativo(pathname: string, href: string): boolean {
+  // Páginas de álbum e de artista fazem parte da seção Coleção.
+  if (href === "/colecao" && (pathname.startsWith("/album/") || pathname.startsWith("/artista/"))) return true;
   return href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(href + "/");
 }

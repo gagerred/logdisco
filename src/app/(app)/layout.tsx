@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
 import { AppShell } from "@/components/AppShell";
+import { ColecaoProvider } from "@/lib/colecao-context";
 import { Disco } from "@/components/Disco";
 
 export default function LayoutDoApp({ children }: { children: React.ReactNode }) {
@@ -21,5 +22,9 @@ export default function LayoutDoApp({ children }: { children: React.ReactNode })
       </div>
     );
   }
-  return <AppShell>{children}</AppShell>;
+  return (
+    <ColecaoProvider>
+      <AppShell>{children}</AppShell>
+    </ColecaoProvider>
+  );
 }

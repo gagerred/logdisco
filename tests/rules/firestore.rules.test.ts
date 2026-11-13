@@ -6,7 +6,7 @@ import {
   initializeTestEnvironment,
   type RulesTestEnvironment,
 } from "@firebase/rules-unit-testing";
-import { doc, getDoc, setDoc, updateDoc, deleteDoc, Timestamp } from "firebase/firestore";
+import { deleteField, doc, getDoc, setDoc, updateDoc, deleteDoc, Timestamp } from "firebase/firestore";
 
 let env: RulesTestEnvironment;
 
@@ -70,6 +70,20 @@ describe("álbuns", () => {
     const ref = doc(alice(), "users/alice/releases/1");
     await assertSucceeds(updateDoc(ref, { titleCustom: "Meu título", mediaType: "CD" }));
     await assertSucceeds(updateDoc(ref, { mediaType: "CD/DVD" }));
+  });
+  it("permite voltar ao título original (remover o título personalizado)", async () => {
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      await updateDoc(doc(ctx.firestore(), "users/alice/releases/1"), { titleCustom: "Meu título" });
+    });
+    await assertSucceeds(updateDoc(doc(alice(), "users/alice/releases/1"), { titleCustom: deleteField() }));
+  });
+  it("bloqueia alterar status, data de inclusão, proteção do artista e dados do Discogs", async () => {
+    const ref = doc(alice(), "users/alice/releases/1");
+    await assertFails(updateDoc(ref, { status: "removed" }));
+    await assertFails(updateDoc(ref, { addedAt: Timestamp.now() }));
+    await assertFails(updateDoc(ref, { artistNameLocked: false }));
+    await assertFails(updateDoc(ref, { tracks: [] }));
+    await assertFails(updateDoc(ref, { formatOriginal: "CD" }));
   });
   it("bloqueia alterar artista, categoria fora das 4 permitidas, criar e excluir", async () => {
     const ref = doc(alice(), "users/alice/releases/1");

@@ -3,6 +3,7 @@ import { ErroConfiguracao } from "@/lib/firebase-admin";
 import { DiscogsErro, type TipoErroDiscogs } from "@/lib/discogs/erros";
 import { ErroAutenticacao } from "./auth";
 import { ErroSemVinculo } from "./discogs-conta";
+import { ErroNegocio } from "./erros-negocio";
 
 const STATUS_DISCOGS: Record<TipoErroDiscogs, number> = {
   nao_encontrado: 404,
@@ -16,6 +17,9 @@ const STATUS_DISCOGS: Record<TipoErroDiscogs, number> = {
 /** Traduz erros conhecidos em respostas JSON com mensagem em português. */
 export function respostaDeErro(e: unknown): NextResponse {
   if (e instanceof ErroAutenticacao) return NextResponse.json({ ok: false, erro: e.message }, { status: 401 });
+  if (e instanceof ErroNegocio) {
+    return NextResponse.json({ ok: false, erro: e.message, codigo: e.codigo, ...e.extra }, { status: e.status });
+  }
   if (e instanceof ErroSemVinculo) return NextResponse.json({ ok: false, erro: e.message, codigo: "sem_vinculo" }, { status: 409 });
   if (e instanceof ErroConfiguracao) return NextResponse.json({ ok: false, erro: e.message }, { status: 500 });
   if (e instanceof DiscogsErro) {

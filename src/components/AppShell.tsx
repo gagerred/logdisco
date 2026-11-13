@@ -3,17 +3,22 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Ellipsis, LogOut } from "lucide-react";
+import { Ellipsis, LogOut, Search } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { ativo, NAV_PRINCIPAL, NAV_SECUNDARIA } from "@/lib/nav";
+import { BuscaNavbar } from "./BuscaNavbar";
 import { Logo } from "./Logo";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { user, sair } = useAuth();
   const [maisAberto, setMaisAberto] = useState(false);
+  const [buscaAberta, setBuscaAberta] = useState(false);
 
-  useEffect(() => setMaisAberto(false), [pathname]);
+  useEffect(() => {
+    setMaisAberto(false);
+    setBuscaAberta(false);
+  }, [pathname]);
   useEffect(() => {
     if (!maisAberto) return;
     const fechar = (e: KeyboardEvent) => e.key === "Escape" && setMaisAberto(false);
@@ -48,6 +53,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             })}
           </nav>
           <div className="flex items-center gap-3 text-sm">
+            <button onClick={() => setBuscaAberta(true)} className="inline-flex min-h-11 items-center gap-2 rounded-md px-3 text-verde-100 hover:bg-verde-900">
+              <Search className="h-4 w-4" aria-hidden="true" /> Buscar
+            </button>
             <span className="max-w-40 truncate text-verde-100">{primeiroNome}</span>
             <button onClick={sair} className="inline-flex min-h-11 items-center gap-2 rounded-md px-3 text-verde-100 hover:bg-verde-900">
               <LogOut className="h-4 w-4" aria-hidden="true" /> Sair
@@ -58,7 +66,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
       {/* Barra superior — celular */}
       <header className="sticky top-0 z-20 bg-verde-950 px-4 pb-3 pt-[calc(0.75rem+env(safe-area-inset-top))] text-white md:hidden">
-        <Logo className="text-lg" />
+        <div className="flex items-center justify-between">
+          <Logo className="text-lg" />
+          <button onClick={() => setBuscaAberta(true)} aria-label="Pesquisar na coleção" className="-my-2 grid h-11 w-11 place-items-center rounded-md hover:bg-verde-900">
+            <Search className="h-5 w-5" aria-hidden="true" />
+          </button>
+        </div>
       </header>
 
       <main className="mx-auto w-full max-w-6xl min-w-0 px-4 py-6 pb-32 md:pb-10">{children}</main>
@@ -115,6 +128,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           Mais
         </button>
       </nav>
+      <BuscaNavbar aberto={buscaAberta} aoFechar={() => setBuscaAberta(false)} />
     </div>
   );
 }
