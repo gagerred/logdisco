@@ -89,6 +89,18 @@ describe("dados gravados só pelo servidor", () => {
     await assertFails(getDoc(doc(alice(), "users/alice/private/discogs")));
     await assertFails(setDoc(doc(alice(), "users/alice/private/discogs"), { token: "x" }));
   });
+  it("estado da integração com o Discogs: o usuário lê, mas não grava", async () => {
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      await setDoc(doc(ctx.firestore(), "users/alice/integrations/discogs"), { username: "alice_discogs" });
+    });
+    await assertSucceeds(getDoc(doc(alice(), "users/alice/integrations/discogs")));
+    await assertFails(setDoc(doc(alice(), "users/alice/integrations/discogs"), { username: "outro" }));
+    await assertFails(getDoc(doc(bob(), "users/alice/integrations/discogs")));
+  });
+  it("coleção de pedidos pendentes de OAuth é inacessível no navegador", async () => {
+    await assertFails(getDoc(doc(alice(), "discogsOAuthPending/qualquer")));
+    await assertFails(setDoc(doc(alice(), "discogsOAuthPending/qualquer"), { uid: "alice" }));
+  });
   it("histórico de alterações só aceita novas entradas", async () => {
     await assertSucceeds(setDoc(doc(alice(), "users/alice/changeLog/c2"), { tipo: "edicao" }));
     await assertFails(updateDoc(doc(alice(), "users/alice/changeLog/c1"), { tipo: "x" }));

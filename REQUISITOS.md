@@ -16,10 +16,12 @@ Legenda: `[x]` implementado e testado · `[~]` implementado, falta validar com o
 - [~] 2.2 Cache local apagado ao sair da conta (2)
 
 ## 3. Integração com o Discogs
-- [ ] 3.1 Normalizar R123456 / 123456 / [R123456] (3)
-- [ ] 3.2 Importar artista, título, faixas, capa, formato, artistas das faixas, link, release e master (3)
-- [ ] 3.3 Mapear formato para CD / Vinyl / DVD / CD/DVD; formato original somente leitura (3)
-- [ ] Vínculo da conta Discogs por OAuth 1.0a; fila respeitando 60 req/min (3)
+- [x] 3.1 Normalizar R123456 / 123456 / [R123456] (3) — 21 testes unitários
+- [~] 3.2 Leitura de artista, título, faixas, capa, formato, artistas das faixas, link, release e master (3) — conversão testada com dados de exemplo; falta validar com o Discogs real (use "Testar consulta de lançamento"). A gravação no banco é na Etapa 4
+- [x] 3.3 Mapear formato para CD / Vinyl / DVD / CD/DVD (3) — testado; formatos sem correspondência (Cassette, Blu-ray…) ficam para o usuário escolher
+- [ ] 3.3 Formato original somente leitura na edição (4)
+- [~] Vínculo da conta Discogs por OAuth 1.0a (3) — fluxo testado com respostas simuladas; falta validar com o Discogs real
+- [x] Fila que respeita 60 req/min, com tratamento de 429, falha de rede e erros 5xx (3) — testado
 
 ## 4. Tela inicial
 - [ ] Cinco últimas audições por data e horário (5)
@@ -71,7 +73,8 @@ Legenda: `[x]` implementado e testado · `[~]` implementado, falta validar com o
 
 ## 18. Configurações
 - [~] Conta, nome, e-mail, alterar/definir senha, Google continua funcionando (2)
-- [ ] Vínculo Discogs, últimas atualizações, importação/exportação, backup (3–9)
+- [~] Vínculo/desvínculo do Discogs nas Configurações (3)
+- [ ] Últimas atualizações, importação/exportação, backup (6–9)
 
 ## 19–21. Integridade, requisitos técnicos e testes
 - [~] Chaves só no servidor; `.env*` fora do Git (2)

@@ -58,6 +58,9 @@ service cloud.firestore {
         allow update, delete: if false;
       }
 
+      // Estado da integração com o Discogs (usuário, data): o usuário só lê.
+      match /integrations/{id} { allow read: if dono(uid); allow write: if false; }
+
       // Tokens do Discogs e travas de execução: inacessíveis pelo navegador.
       match /private/{id} { allow read, write: if false; }
       match /locks/{id}   { allow read, write: if false; }

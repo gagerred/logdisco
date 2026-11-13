@@ -13,6 +13,7 @@ import {
 import { Loader2 } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { mensagemDeErro } from "@/lib/auth-errors";
+import { SecaoDiscogs } from "@/components/SecaoDiscogs";
 
 function SecaoConta({ user }: { user: User }) {
   const metodos = [
@@ -167,6 +168,7 @@ export default function Configuracoes() {
       <h1 className="text-2xl font-extrabold tracking-tight text-verde-950 md:text-3xl">Configurações</h1>
       <SecaoConta user={user} />
       <SecaoSenha user={user} />
+      <SecaoDiscogs user={user} />
       <SecaoDiagnostico user={user} />
     </div>
   );
