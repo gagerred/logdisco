@@ -2,24 +2,29 @@
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { ChevronLeft, ExternalLink, Pencil, RefreshCw, Search } from "lucide-react";
 import { CapaAlbum } from "@/components/CapaAlbum";
 import { EditarAlbum } from "@/components/EditarAlbum";
 import { SeloMidia } from "@/components/LinhaAlbum";
+import { LinhaAudicao } from "@/components/LinhaAudicao";
 import { RecarregarAlbum } from "@/components/RecarregarAlbum";
+import { RegistrarAudicao } from "@/components/RegistrarAudicao";
 import { tituloExibido } from "@/lib/colecao/filtros";
 import { useColecao } from "@/lib/colecao-context";
+import { identificarAudicao, ordenarAudicoes } from "@/lib/diario/datas";
 import { urlDaLetra } from "@/lib/links";
 
 const dataBR = (m: { toDate(): Date } | null | undefined) => m?.toDate().toLocaleDateString("pt-BR") ?? "—";
 
 export default function PaginaDoAlbum() {
   const { id } = useParams<{ id: string }>();
-  const { todos, carregando } = useColecao();
+  const { todos, audicoes, carregando } = useColecao();
   const [editando, setEditando] = useState(false);
   const [recarregando, setRecarregando] = useState(false);
+  const [registrando, setRegistrando] = useState(false);
   const album = todos.find((a) => a.id === id);
+  const minhasAudicoes = useMemo(() => ordenarAudicoes(audicoes.filter((a) => a.releaseId === id)), [audicoes, id]);
 
   if (carregando) return <p className="text-verde-800">Carregando…</p>;
   if (!album) {
@@ -67,6 +72,9 @@ export default function PaginaDoAlbum() {
           </dl>
 
           <div className="mt-5 flex flex-wrap gap-2">
+            {album.status !== "removed" && (
+              <button className="btn-primario" onClick={() => setRegistrando(true)}>Registrar audição</button>
+            )}
             <button className="btn-contorno" onClick={() => setEditando(true)}>
               <Pencil className="h-4 w-4" aria-hidden="true" /> Editar
             </button>
@@ -113,8 +121,24 @@ export default function PaginaDoAlbum() {
         )}
       </section>
 
+      <section aria-labelledby="audicoes">
+        <h2 id="audicoes" className="mb-2 text-xl font-bold text-verde-950">
+          Audições <span className="text-base font-normal text-verde-700">({minhasAudicoes.length})</span>
+        </h2>
+        {minhasAudicoes.length === 0 ? (
+          <p className="text-verde-800">Você ainda não registrou nenhuma audição deste álbum.</p>
+        ) : (
+          <ul className="space-y-2">
+            {minhasAudicoes.map((a) => (
+              <li key={a.id}><LinhaAudicao audicao={a} ident={identificarAudicao(a, new Map([[album.id, album]]))} mostrarAlbum={false} acoes /></li>
+            ))}
+          </ul>
+        )}
+      </section>
+
       <EditarAlbum album={album} aberto={editando} aoFechar={() => setEditando(false)} />
       <RecarregarAlbum album={album} aberto={recarregando} aoFechar={() => setRecarregando(false)} />
+      <RegistrarAudicao album={album} aberto={registrando} aoFechar={() => setRegistrando(false)} />
     </div>
   );
 }

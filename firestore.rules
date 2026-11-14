@@ -6,11 +6,13 @@ service cloud.firestore {
       return request.auth != null && request.auth.uid == uid;
     }
 
-    function audicaoValida(d) {
+    // Audição: formato de data e hora, e o álbum precisa existir na coleção do próprio usuário.
+    function audicaoValida(uid, d) {
       return d.releaseId is string
-        && d.date is string
-        && d.time is string
-        && d.listenedAt is timestamp;
+        && d.date is string && d.date.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$')
+        && d.time is string && d.time.matches('^[0-9]{2}:[0-9]{2}$')
+        && d.listenedAt is timestamp
+        && exists(/databases/$(database)/documents/users/$(uid)/releases/$(d.releaseId));
     }
 
     // Tudo fica dentro de /users/{uid}: cada usuário só enxerga o próprio ramo.
@@ -38,7 +40,10 @@ service cloud.firestore {
       // Audições: o usuário registra, edita e exclui.
       match /listens/{id} {
         allow read, delete: if dono(uid);
-        allow create, update: if dono(uid) && audicaoValida(request.resource.data);
+        allow create: if dono(uid) && audicaoValida(uid, request.resource.data);
+        // Editar muda só data e horário: a audição não pode passar para outro álbum.
+        allow update: if dono(uid) && audicaoValida(uid, request.resource.data)
+          && request.resource.data.releaseId == resource.data.releaseId;
       }
 
       // Quero Conhecer: criado pelo servidor (consulta o Discogs); o usuário pode excluir.

@@ -24,8 +24,8 @@ Legenda: `[x]` implementado e testado · `[~]` implementado, falta validar com o
 - [x] Fila que respeita 60 req/min, com tratamento de 429, falha de rede e erros 5xx (3) — testado
 
 ## 4. Tela inicial
-- [ ] Cinco últimas audições por data e horário (5)
-- [ ] 4.1 Pesquisar música — só na página inicial (5)
+- [~] Cinco últimas audições, ordenadas pela data e horário da audição e não pelo cadastro (5) — lógica e tela testadas com dados de exemplo
+- [~] 4.1 Pesquisar música — só na página inicial; mostra em quais álbuns a música aparece (5)
 
 ## 5. Coleção
 - [~] 5.1 Cadastro por código do Discogs, com data de inclusão (4) — servidor testado com banco simulado (duplicados, edições diferentes, categoria obrigatória, reativação); falta validar com Firestore e Discogs reais
@@ -34,7 +34,7 @@ Legenda: `[x]` implementado e testado · `[~]` implementado, falta validar com o
 - [x] 5.3 Filtros combinados: artista, título, formato, ouvido/nunca ouvido (4) — lógica testada; "ouvido/nunca ouvido" passa a ter dados reais com o diário (5)
 - [~] 5.4 Pesquisa na navbar: artista ou título, com capa e formato ao lado do título (4)
 - [~] 5.5 Página do álbum: capa, artista, título, formato, faixas, link do Discogs, data de inclusão (4)
-- [ ] 5.5 Botão "Registrar audição" na página do álbum (5)
+- [~] 5.5 Botão "Registrar audição" e lista de audições na página do álbum (5)
 - [~] 5.6 Edição: título e formato; artista não editável (4) — regras do Firestore limitam as edições a esses campos
 - [~] 5.7 Recarregar do Discogs, com prévia das diferenças e confirmação, sem tocar nas audições (4) — testado com banco simulado
 
@@ -43,9 +43,9 @@ Legenda: `[x]` implementado e testado · `[~]` implementado, falta validar com o
 - [ ] Página do artista: álbuns da lista de desejos (7)
 
 ## 7. Diário de audições
-- [ ] 7.1 Registrar audição (calendário, "Hoje", horário) (5)
-- [ ] 7.2 Editar e excluir (5)
-- [ ] 7.3 Calendário de audições (5)
+- [~] 7.1 Registrar audição (calendário, "Hoje", horário), com validação de data real e sem datas futuras (5)
+- [~] 7.2 Editar data/horário e excluir, com confirmação (5) — as telas refletem a mudança em tempo real
+- [~] 7.3 Calendário de audições: dias marcados, lista do dia, navegação por mês e ano (5)
 
 ## 8. Sincronização
 - [ ] Comparação, tela de conferência, aprovação, soft delete, histórico (6)
@@ -61,7 +61,7 @@ Legenda: `[x]` implementado e testado · `[~]` implementado, falta validar com o
 - [ ] 11.1 Gerais · 11.2 Anuais · 11.3 Por tipo de mídia · 11.4 Apresentação (8)
 
 ## 12. Sorteio
-- [ ] Sortear disco com filtros dos grupos A e B (5)
+- [~] Sortear disco com filtros dos grupos A e B, independentes e opcionais (5) — lógica testada; "Somente CD" não inclui CD/DVD
 
 ## 13–14. Letras e "Various"
 - [~] Botão de letra por faixa (4) · artista por faixa em álbuns "Various" (4)
@@ -82,6 +82,7 @@ Legenda: `[x]` implementado e testado · `[~]` implementado, falta validar com o
 ## 19–21. Integridade, requisitos técnicos e testes
 - [x] 19.2–19.4 Lançamento único por código de Release; edições diferentes ficam separadas (4) — testado
 - [x] 19.5–19.6 Edição e recarga do Discogs não alteram audições (4) — testado
+- [x] 19.1 / 19.14 Isolamento por usuário nas regras; audições só de álbuns do próprio usuário (5) — regras escritas, teste no emulador pendente de execução
 - [~] 19.8 / 19.13 Exclusão lógica: reativação preserva histórico (4, testado); fluxo de remoção na sincronização (6)
 - [~] Chaves só no servidor; `.env*` fora do Git (2)
 - [x] Teste unitário das mensagens de erro de login (2)

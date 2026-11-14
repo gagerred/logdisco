@@ -24,12 +24,18 @@ export type AlbumDoc = Omit<ReleaseDoc, "artists" | "mediaType"> & {
   lastRefreshedAt?: Momento | null;
 };
 
+/** Identificação do álbum guardada na audição, para o histórico continuar legível mesmo sem o álbum. */
+export type SnapshotAlbum = { artistName: string; title: string; thumb: string | null; mediaType: string };
+
 export type AudicaoDoc = {
   id: string;
   releaseId: string;
+  /** Data efetiva da audição (AAAA-MM-DD). É ela, e não a data do cadastro, que conta nos relatórios. */
   date: string;
+  /** Horário efetivo da audição (HH:mm). */
   time: string;
   listenedAt: Momento;
+  snapshot?: SnapshotAlbum;
 };
 
 export type DetalheMudanca = { campo: string; rotulo: string; de: string; para: string };

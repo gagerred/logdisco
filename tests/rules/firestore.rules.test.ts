@@ -59,6 +59,19 @@ describe("audições", () => {
     await assertSucceeds(updateDoc(doc(alice(), "users/alice/listens/l1"), { date: "2026-10-31", time: "21:30" }));
     await assertSucceeds(deleteDoc(doc(alice(), "users/alice/listens/l1")));
   });
+  it("rejeita audição de um álbum que não existe na coleção", async () => {
+    await assertFails(setDoc(doc(alice(), "users/alice/listens/l5"), { ...valida(), releaseId: "999" }));
+  });
+  it("rejeita data e horário fora do formato AAAA-MM-DD e HH:mm", async () => {
+    await assertFails(setDoc(doc(alice(), "users/alice/listens/l6"), { ...valida(), date: "13/11/2026" }));
+    await assertFails(setDoc(doc(alice(), "users/alice/listens/l7"), { ...valida(), time: "9h" }));
+  });
+  it("não permite mover uma audição para outro álbum", async () => {
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      await setDoc(doc(ctx.firestore(), "users/alice/releases/2"), { artistName: "B", title: "T", mediaType: "CD" });
+    });
+    await assertFails(updateDoc(doc(alice(), "users/alice/listens/l1"), { releaseId: "2" }));
+  });
   it("rejeita audição sem data ou com tipos errados", async () => {
     await assertFails(setDoc(doc(alice(), "users/alice/listens/l3"), { releaseId: "1", time: "10:00", listenedAt: Timestamp.now() }));
     await assertFails(setDoc(doc(alice(), "users/alice/listens/l4"), { ...valida(), listenedAt: "ontem" }));
