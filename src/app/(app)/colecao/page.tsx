@@ -2,16 +2,19 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { Plus, Search } from "lucide-react";
+import { Plus, RefreshCw, Search } from "lucide-react";
 import { LinhaAlbum } from "@/components/LinhaAlbum";
 import { ListaArtistas } from "@/components/ListaArtistas";
 import { agruparPorArtista, artistasRecentes } from "@/lib/colecao/artistas";
 import { buscarAlbuns, ordenarAlbuns } from "@/lib/colecao/filtros";
 import { normalizarTexto } from "@/lib/colecao/texto";
 import { useColecao } from "@/lib/colecao-context";
+import { ROTULO_STATUS } from "@/lib/sync/tipos";
+import { formatarMomento, useUltimaSincronizacao } from "@/lib/sync/use-sync";
 
 export default function Colecao() {
   const { ativos, carregando, erro } = useColecao();
+  const ultima = useUltimaSincronizacao();
   const [texto, setTexto] = useState("");
   const busca = texto.trim();
 
@@ -34,10 +37,21 @@ export default function Colecao() {
             </p>
           )}
         </div>
-        <Link href="/colecao/adicionar" className="btn-primario">
-          <Plus className="h-4 w-4" aria-hidden="true" /> Adicionar disco
-        </Link>
+        <div className="flex flex-wrap gap-2">
+          <Link href="/colecao/sincronizar" className="btn-contorno">
+            <RefreshCw className="h-4 w-4" aria-hidden="true" /> Sincronizar
+          </Link>
+          <Link href="/colecao/adicionar" className="btn-primario">
+            <Plus className="h-4 w-4" aria-hidden="true" /> Adicionar disco
+          </Link>
+        </div>
       </div>
+      <p className="-mt-3 text-sm text-verde-800">
+        Última sincronização:{" "}
+        {ultima === undefined ? "…" : ultima ? `${formatarMomento(ultima.concluidaEm)} · ${ROTULO_STATUS[ultima.status]}` : "nenhuma realizada ainda"}
+        {" · "}
+        <Link href="/colecao/sincronizacoes" className="font-semibold underline underline-offset-2">Histórico</Link>
+      </p>
 
       {erro && <p role="alert" className="aviso-erro">{erro}</p>}
 

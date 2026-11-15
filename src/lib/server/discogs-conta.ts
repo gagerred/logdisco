@@ -11,12 +11,12 @@ export class ErroSemVinculo extends Error {
 type DadosPrivados = { accessToken: string; accessTokenSecret: string; username: string };
 
 /** Cria o cliente do Discogs com o OAuth guardado para o usuário (documento acessível só ao servidor). */
-export async function clienteDoUsuario(uid: string): Promise<DiscogsClient> {
+export async function contaDiscogsDoUsuario(uid: string): Promise<{ cliente: DiscogsClient; username: string }> {
   const cfg = lerConfigDiscogs();
   const snap = await getAdminDb().doc(`users/${uid}/private/discogs`).get();
   const d = snap.data() as DadosPrivados | undefined;
-  if (!snap.exists || !d?.accessToken || !d?.accessTokenSecret) throw new ErroSemVinculo();
-  return new DiscogsClient({
+  if (!snap.exists || !d?.accessToken || !d?.accessTokenSecret || !d?.username) throw new ErroSemVinculo();
+  const cliente = new DiscogsClient({
     userAgent: cfg.userAgent,
     credenciais: {
       consumerKey: cfg.consumerKey,
@@ -25,4 +25,9 @@ export async function clienteDoUsuario(uid: string): Promise<DiscogsClient> {
       tokenSecret: d.accessTokenSecret,
     },
   });
+  return { cliente, username: d.username };
+}
+
+export async function clienteDoUsuario(uid: string): Promise<DiscogsClient> {
+  return (await contaDiscogsDoUsuario(uid)).cliente;
 }

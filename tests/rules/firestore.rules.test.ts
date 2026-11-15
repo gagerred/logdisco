@@ -116,6 +116,18 @@ describe("dados gravados só pelo servidor", () => {
     await assertFails(getDoc(doc(alice(), "users/alice/private/discogs")));
     await assertFails(setDoc(doc(alice(), "users/alice/private/discogs"), { token: "x" }));
   });
+  it("sincronização: o usuário lê as execuções e seus itens, mas só o servidor grava", async () => {
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      await setDoc(doc(ctx.firestore(), "users/alice/syncRuns/s1"), { status: "conferencia" });
+      await setDoc(doc(ctx.firestore(), "users/alice/syncRuns/s1/items/5"), { acao: "adicionar" });
+    });
+    await assertSucceeds(getDoc(doc(alice(), "users/alice/syncRuns/s1")));
+    await assertSucceeds(getDoc(doc(alice(), "users/alice/syncRuns/s1/items/5")));
+    await assertFails(updateDoc(doc(alice(), "users/alice/syncRuns/s1"), { status: "concluida" }));
+    await assertFails(updateDoc(doc(alice(), "users/alice/syncRuns/s1/items/5"), { selecionado: false }));
+    await assertFails(setDoc(doc(alice(), "users/alice/syncRuns/s2"), { status: "concluida" }));
+    await assertFails(getDoc(doc(bob(), "users/alice/syncRuns/s1/items/5")));
+  });
   it("estado da integração com o Discogs: o usuário lê, mas não grava", async () => {
     await env.withSecurityRulesDisabled(async (ctx) => {
       await setDoc(doc(ctx.firestore(), "users/alice/integrations/discogs"), { username: "alice_discogs" });

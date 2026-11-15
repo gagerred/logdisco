@@ -1,6 +1,7 @@
 import { DiscogsErro, erroPorStatus } from "./erros";
 import { requisitar, resolverDeps, type DepsHttp } from "./http";
 import { cabecalhoOAuth } from "./oauth";
+import type { PaginaBruta } from "@/lib/sync/plano";
 import type { ReleaseBruto } from "./release";
 
 export const BASE_API = "https://api.discogs.com";
@@ -49,6 +50,13 @@ export class DiscogsClient {
 
   buscarRelease(id: number): Promise<ReleaseBruto> {
     return this.get<ReleaseBruto>(`/releases/${id}`);
+  }
+
+  /** Uma página (até 100 itens) da coleção do usuário, somando todas as pastas. */
+  listarColecao(username: string, pagina: number): Promise<PaginaBruta> {
+    return this.get<PaginaBruta>(
+      `/users/${encodeURIComponent(username)}/collection/folders/0/releases?page=${pagina}&per_page=100&sort=added&sort_order=desc`,
+    );
   }
 
   identidade(): Promise<{ id: number; username: string }> {

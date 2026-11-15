@@ -6,7 +6,10 @@ import { doc, onSnapshot, type Timestamp } from "firebase/firestore";
 import { Loader2 } from "lucide-react";
 import { chamarApi } from "@/lib/api-cliente";
 import { getDb } from "@/lib/firebase-client";
+import Link from "next/link";
 import { normalizarCodigoRelease } from "@/lib/discogs/codigo";
+import { ROTULO_STATUS } from "@/lib/sync/tipos";
+import { formatarMomento, useUltimaSincronizacao } from "@/lib/sync/use-sync";
 import type { ReleaseDoc } from "@/lib/discogs/release";
 import { CartaoRelease } from "./CartaoRelease";
 
@@ -27,6 +30,7 @@ export function SecaoDiscogs({ user }: { user: User }) {
   const [consultando, setConsultando] = useState(false);
   const [erroConsulta, setErroConsulta] = useState<string | null>(null);
   const [release, setRelease] = useState<ReleaseDoc | null>(null);
+  const ultimaSync = useUltimaSincronizacao();
 
   useEffect(
     () =>
@@ -107,6 +111,12 @@ export function SecaoDiscogs({ user }: { user: User }) {
         <>
           <p className="mt-2 text-sm">
             Conta vinculada: <strong>{vinculo.username}</strong>{data ? ` · desde ${data}` : ""}
+          </p>
+          <p className="mt-2 text-sm">
+            Última sincronização da coleção:{" "}
+            <strong>{ultimaSync === undefined ? "…" : ultimaSync ? `${formatarMomento(ultimaSync.concluidaEm)} · ${ROTULO_STATUS[ultimaSync.status]}` : "nenhuma realizada ainda"}</strong>
+            {" · "}
+            <Link href="/colecao/sincronizacoes" className="font-semibold underline underline-offset-2">Histórico</Link>
           </p>
           <p className="mt-1 text-xs text-verde-700">
             Para revogar totalmente o acesso, remova o LogDisco também nos aplicativos autorizados da sua conta no Discogs.

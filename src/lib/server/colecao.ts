@@ -6,15 +6,18 @@ import { urlDoArtistaNoDiscogs } from "@/lib/links";
 import type { AlbumDoc, DetalheMudanca } from "@/lib/tipos";
 import { ErroNegocio } from "./erros-negocio";
 
-type EntradaLog = {
-  tipo: "inclusao" | "atualizacao";
-  releaseId: number;
+export type EntradaLog = {
+  tipo: "inclusao" | "atualizacao" | "remocao" | "sincronizacao";
+  releaseId?: number;
   resumo: string;
   detalhes?: DetalheMudanca[];
+  /** Presente quando a operação veio de uma sincronização. */
+  origem?: "sincronizacao";
+  syncRunId?: string;
 };
 
 /** Registra uma operação no histórico de alterações (users/{uid}/changeLog). */
-function registrar(uid: string, entrada: EntradaLog) {
+export function registrar(uid: string, entrada: EntradaLog) {
   const ref = getAdminDb().collection(`users/${uid}/changeLog`).doc();
   return { ref, dados: { ...entrada, at: FieldValue.serverTimestamp() } };
 }
@@ -23,7 +26,12 @@ function registrar(uid: string, entrada: EntradaLog) {
  * Adiciona um lançamento à coleção. Não cria duplicados: se já está ativo, recusa;
  * se foi removido antes (exclusão lógica), reativa sem tocar nas audições.
  */
-export async function adicionarAlbum(uid: string, release: ReleaseDoc, categoriaEscolhida: unknown) {
+export async function adicionarAlbum(
+  uid: string,
+  release: ReleaseDoc,
+  categoriaEscolhida: unknown,
+  opcoes: { syncRunId?: string } = {},
+) {
   if (categoriaEscolhida !== undefined && categoriaEscolhida !== null && !ehCategoriaValida(categoriaEscolhida)) {
     throw new ErroNegocio("categoria_invalida", "Categoria de mídia inválida. Use CD, Vinyl, DVD ou CD/DVD.", 400);
   }
@@ -80,7 +88,8 @@ export async function adicionarAlbum(uid: string, release: ReleaseDoc, categoria
     const log = registrar(uid, {
       tipo: "inclusao",
       releaseId: release.releaseId,
-      resumo: `${reativado ? "Reincluiu" : "Incluiu"} ${nomeDoAlbum} (${categoria})`,
+      resumo: `${reativado ? "Reincluiu" : "Incluiu"} ${nomeDoAlbum} (${categoria})${opcoes.syncRunId ? " — sincronização" : ""}`,
+      ...(opcoes.syncRunId ? { origem: "sincronizacao" as const, syncRunId: opcoes.syncRunId } : {}),
     });
     tx.set(log.ref, log.dados);
   });

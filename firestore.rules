@@ -54,7 +54,11 @@ service cloud.firestore {
 
       // Gravados só pelo servidor; o usuário apenas lê.
       match /wantlist/{id}      { allow read: if dono(uid); allow write: if false; }
-      match /syncRuns/{id}      { allow read: if dono(uid); allow write: if false; }
+      match /syncRuns/{id} {
+        allow read: if dono(uid);
+        allow write: if false;
+        match /items/{item} { allow read: if dono(uid); allow write: if false; }
+      }
       match /wantlistRuns/{id}  { allow read: if dono(uid); allow write: if false; }
 
       // Histórico de alterações: o usuário lê e cria, nunca edita nem apaga.

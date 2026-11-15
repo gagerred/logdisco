@@ -30,7 +30,7 @@ Legenda: `[x]` implementado e testado · `[~]` implementado, falta validar com o
 ## 5. Coleção
 - [~] 5.1 Cadastro por código do Discogs, com data de inclusão (4) — servidor testado com banco simulado (duplicados, edições diferentes, categoria obrigatória, reativação); falta validar com Firestore e Discogs reais
 - [~] 5.2 Tela da coleção: artistas, "Ver todos os artistas/álbuns" (4)
-- [ ] 5.2 Botão Sincronizar e indicador da última sincronização (6)
+- [~] 5.2 Botão Sincronizar e indicador da última sincronização na tela da coleção (6)
 - [x] 5.3 Filtros combinados: artista, título, formato, ouvido/nunca ouvido (4) — lógica testada; "ouvido/nunca ouvido" passa a ter dados reais com o diário (5)
 - [~] 5.4 Pesquisa na navbar: artista ou título, com capa e formato ao lado do título (4)
 - [~] 5.5 Página do álbum: capa, artista, título, formato, faixas, link do Discogs, data de inclusão (4)
@@ -48,7 +48,11 @@ Legenda: `[x]` implementado e testado · `[~]` implementado, falta validar com o
 - [~] 7.3 Calendário de audições: dias marcados, lista do dia, navegação por mês e ano (5)
 
 ## 8. Sincronização
-- [ ] Comparação, tela de conferência, aprovação, soft delete, histórico (6)
+- [~] 8 / 8.1 Comparar com a coleção do Discogs por ID de Release: adicionar o que falta, sem duplicar; identificar o que já existe e o que saiu do Discogs (6) — comparação, plano e aplicação testados com Firestore e Discogs simulados; falta validar com os reais
+- [~] 8.2 Tela de conferência com as três categorias (adicionados, inalterados, removidos); nada é alterado antes da aprovação; seleção item a item; confirmação extra para remoção de metade ou mais da coleção (6)
+- [~] 8.3 Exclusão lógica: álbum removido sai da coleção ativa, mas registros e audições permanecem; não conta nos "nunca ouvidos" (6; relatórios na 8)
+- [~] 8.4 Histórico de sincronizações: data e horário, adicionados, removidos, inalterados, resultado e erros (6)
+- [~] Execução em partes e retomável (limite de tempo das funções e de requisições do Discogs); trava contra duas sincronizações simultâneas (6)
 
 ## 9. Lista de desejos
 - [ ] 9.1–9.4 Wantlist, ordenação, busca, marketplaces (7)
@@ -77,13 +81,16 @@ Legenda: `[x]` implementado e testado · `[~]` implementado, falta validar com o
 ## 18. Configurações
 - [~] Conta, nome, e-mail, alterar/definir senha, Google continua funcionando (2)
 - [~] Vínculo/desvínculo do Discogs nas Configurações (3)
-- [ ] Últimas atualizações, importação/exportação, backup (6–9)
+- [~] Consulta da última sincronização da coleção (6)
+- [ ] Última atualização da lista de desejos, importação/exportação, backup (7–9)
 
 ## 19–21. Integridade, requisitos técnicos e testes
 - [x] 19.2–19.4 Lançamento único por código de Release; edições diferentes ficam separadas (4) — testado
 - [x] 19.5–19.6 Edição e recarga do Discogs não alteram audições (4) — testado
 - [x] 19.1 / 19.14 Isolamento por usuário nas regras; audições só de álbuns do próprio usuário (5) — regras escritas, teste no emulador pendente de execução
-- [~] 19.8 / 19.13 Exclusão lógica: reativação preserva histórico (4, testado); fluxo de remoção na sincronização (6)
+- [x] 19.8 / 19.13 Exclusão lógica: a remoção na sincronização só marca o álbum como removido e preserva o histórico; reativação também (4, 6) — testado
+- [x] 19.7 / 19.15 A sincronização nunca lê nem grava audições (6) — testado
+- [~] 19.11 Prévia antes de alterar dados: recarregar álbum (4) e sincronização (6); importação CSV (9)
 - [~] Chaves só no servidor; `.env*` fora do Git (2)
 - [x] Teste unitário das mensagens de erro de login (2)
 - [ ] Testes: cadastro, sincronização, histórico, soft delete, CSV, cron, relatórios, filtros/sorteio, responsividade (3–10)
