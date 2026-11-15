@@ -32,7 +32,7 @@ export function montarAlbumNovo(release: ReleaseDoc, mediaType: CategoriaMidia) 
 }
 
 /** Identifica a imagem pelo último trecho do endereço, já que a parte inicial pode variar. */
-function identidadeDaImagem(url: string | null | undefined): string {
+export function identidadeDaImagem(url: string | null | undefined): string {
   return (url ?? "").split("?")[0].split("/").pop() ?? "";
 }
 

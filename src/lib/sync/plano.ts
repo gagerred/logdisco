@@ -1,6 +1,6 @@
 import { compararNomes } from "@/lib/colecao/artistas";
 import { descreverFormatoOriginal, mapearCategoria, type CategoriaMidia, type FormatoBruto } from "@/lib/discogs/formato";
-import { nomeDosArtistas, type ArtistaBruto } from "@/lib/discogs/release";
+import { limparNomeArtista, nomeDosArtistas, type ArtistaBruto } from "@/lib/discogs/release";
 import type { AlbumDoc } from "@/lib/tipos";
 
 export type BasicoBruto = {
@@ -25,6 +25,10 @@ export type ItemDiscogs = {
   id: number;
   titulo: string;
   artista: string;
+  /** Artistas com o ID do Discogs, para ligar o item às páginas de artista. */
+  artistas: { id: number | null; name: string }[];
+  /** Nomes dos formatos como o Discogs informa (Vinyl, CD, Cassette…), sem repetição. */
+  formatos: string[];
   formatoOriginal: string;
   /** null quando o formato não corresponde a nenhuma das 4 categorias. */
   categoria: CategoriaMidia | null;
@@ -41,6 +45,8 @@ export function converterItemBasico(bruto: ItemBruto): ItemDiscogs | null {
     id,
     titulo: b.title.trim(),
     artista: artistas.length ? nomeDosArtistas(artistas) : "Artista desconhecido",
+    artistas: artistas.map((a) => ({ id: a.id ?? null, name: limparNomeArtista(a.name!) })),
+    formatos: [...new Set((b.formats ?? []).map((f) => (f.name ?? "").trim()).filter(Boolean))],
     formatoOriginal: descreverFormatoOriginal(b.formats),
     categoria: mapearCategoria(b.formats),
     capa: b.thumb || b.cover_image || null,

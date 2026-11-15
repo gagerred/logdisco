@@ -7,6 +7,7 @@ import { converterRelease } from "@/lib/discogs/release";
 import { compararColecao, converterItemBasico, removalEmMassa, type AlbumParaComparar, type ItemDiscogs } from "@/lib/sync/plano";
 import type { ResultadoSync, SyncItemDoc, SyncRunDoc } from "@/lib/sync/tipos";
 import { adicionarAlbum, registrar } from "./colecao";
+import { gravarEmLotes } from "./lotes";
 import { ErroNegocio } from "./erros-negocio";
 import { adquirirTrava, liberarTrava } from "./trava";
 
@@ -14,7 +15,6 @@ type Opcoes = { orcamentoMs?: number; agora?: () => number };
 
 /** Tempo máximo gasto em uma chamada, para caber no limite das funções do Vercel. */
 export const ORCAMENTO_PADRAO_MS = 25_000;
-const TAMANHO_LOTE = 400;
 const nuvem = () => getAdminDb();
 const pastaRuns = (uid: string) => `users/${uid}/syncRuns`;
 const itensDe = (uid: string, runId: string) => `${pastaRuns(uid)}/${runId}/items`;
@@ -25,15 +25,6 @@ async function carregarRun(uid: string, runId: string) {
   const snap = await ref.get();
   if (!snap.exists) throw new ErroNegocio("nao_encontrado", "Sincronização não encontrada.", 404);
   return { ref, run: { ...(snap.data() as Omit<SyncRunDoc, "id">), id: runId } as SyncRunDoc };
-}
-
-/** Executa gravações em lotes de até 400 operações. */
-async function gravarEmLotes<T>(itens: T[], aplicar: (lote: ReturnType<ReturnType<typeof nuvem>["batch"]>, item: T) => void) {
-  for (let i = 0; i < itens.length; i += TAMANHO_LOTE) {
-    const lote = nuvem().batch();
-    for (const item of itens.slice(i, i + TAMANHO_LOTE)) aplicar(lote, item);
-    await lote.commit();
-  }
 }
 
 /** Guarda no histórico o motivo de uma interrupção. Erros de limite podem ser retomados; os demais encerram a verificação. */

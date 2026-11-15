@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { Dices, Search } from "lucide-react";
+import { AvisosDoSistema } from "@/components/AvisosDoSistema";
 import { CapaAlbum } from "@/components/CapaAlbum";
 import { SeloMidia } from "@/components/LinhaAlbum";
 import { LinhaAudicao } from "@/components/LinhaAudicao";
@@ -29,6 +30,8 @@ export default function Inicio() {
           <Dices className="h-4 w-4" aria-hidden="true" /> Sortear disco
         </Link>
       </div>
+
+      <AvisosDoSistema />
 
       <section aria-labelledby="ultimas">
         <h2 id="ultimas" className="mb-2 text-xl font-bold text-verde-950">Últimas audições</h2>

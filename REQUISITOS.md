@@ -40,7 +40,7 @@ Legenda: `[x]` implementado e testado · `[~]` implementado, falta validar com o
 
 ## 6. Artistas
 - [~] Página do artista: álbuns da coleção e link do Discogs (4)
-- [ ] Página do artista: álbuns da lista de desejos (7)
+- [~] Página do artista: álbuns da lista de desejos, com navegação entre coleção e desejos (7)
 
 ## 7. Diário de audições
 - [~] 7.1 Registrar audição (calendário, "Hoje", horário), com validação de data real e sem datas futuras (5)
@@ -55,11 +55,20 @@ Legenda: `[x]` implementado e testado · `[~]` implementado, falta validar com o
 - [~] Execução em partes e retomável (limite de tempo das funções e de requisições do Discogs); trava contra duas sincronizações simultâneas (6)
 
 ## 9. Lista de desejos
-- [ ] 9.1–9.4 Wantlist, ordenação, busca, marketplaces (7)
-- [ ] 9.5 Atualização manual e automática (domingo, 11h, Brasília) com bloqueio e registro de erros (7)
+- [~] 9 / 9.1 Lista obtida da wantlist do Discogs, com artista, título, capa e formato (Vinyl, CD ou outro); não entra na coleção (7) — lógica e telas testadas; falta validar com o Discogs real
+- [~] Decisão do usuário: o disco que consta na coleção ativa sai da lista de desejos (7) — comparação pelo ID do Release; volta a aparecer se for removido da coleção
+- [~] 9.2 Ordenar por artista ou por álbum (A–Z) e busca própria (7)
+- [~] 9.3 Página do disco desejado: Abrir no Discogs; marketplaces (Shopee, Mercado Livre, Amazon) e pesquisa na web por artista e título (7)
+- [~] 9.4 Página do artista na lista de desejos (7)
+- [~] 9.5 Botão "Atualizar lista de desejos" (7)
+- [~] 9.5 Atualização automática no servidor, aos domingos às 11h do fuso do usuário, sem depender do app aberto (7) — no plano Hobby o gatilho é diário (14:00 UTC) e só age quando a semana está pendente; pode atrasar até cerca de 11h59
+- [~] 9.5 Registro da data e hora, indicador de resultado, notificação de erros no app e trava contra execuções simultâneas (7) — testado
+- [x] 9.5 A atualização não altera audições, coleção nem Quero Conhecer (7) — testado
 
 ## 10. Quero Conhecer
-- [ ] Inserção por código, abrir no Discogs, excluir, YouTube Music (7)
+- [~] 10.1 Inserir álbum pelo código do Discogs (7) — servidor testado com banco simulado; falta validar com o Discogs real
+- [~] 10.2 Opções ao clicar: abrir no Discogs, excluir (com confirmação) e ouvir no YouTube Music (7)
+- [x] Lista independente: nada é adicionado à coleção nem à lista de desejos (7) — testado
 
 ## 11. Relatórios
 - [ ] 11.1 Gerais · 11.2 Anuais · 11.3 Por tipo de mídia · 11.4 Apresentação (8)
@@ -82,7 +91,8 @@ Legenda: `[x]` implementado e testado · `[~]` implementado, falta validar com o
 - [~] Conta, nome, e-mail, alterar/definir senha, Google continua funcionando (2)
 - [~] Vínculo/desvínculo do Discogs nas Configurações (3)
 - [~] Consulta da última sincronização da coleção (6)
-- [ ] Última atualização da lista de desejos, importação/exportação, backup (7–9)
+- [~] Consulta da última atualização da lista de desejos (7)
+- [ ] Importação/exportação, backup (9)
 
 ## 19–21. Integridade, requisitos técnicos e testes
 - [x] 19.2–19.4 Lançamento único por código de Release; edições diferentes ficam separadas (4) — testado
@@ -92,5 +102,6 @@ Legenda: `[x]` implementado e testado · `[~]` implementado, falta validar com o
 - [x] 19.7 / 19.15 A sincronização nunca lê nem grava audições (6) — testado
 - [~] 19.11 Prévia antes de alterar dados: recarregar álbum (4) e sincronização (6); importação CSV (9)
 - [~] Chaves só no servidor; `.env*` fora do Git (2)
+- [~] Tarefa agendada no servidor protegida por CRON_SECRET (7)
 - [x] Teste unitário das mensagens de erro de login (2)
 - [ ] Testes: cadastro, sincronização, histórico, soft delete, CSV, cron, relatórios, filtros/sorteio, responsividade (3–10)

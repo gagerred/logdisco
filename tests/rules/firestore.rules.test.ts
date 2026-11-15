@@ -128,6 +128,27 @@ describe("dados gravados só pelo servidor", () => {
     await assertFails(setDoc(doc(alice(), "users/alice/syncRuns/s2"), { status: "concluida" }));
     await assertFails(getDoc(doc(bob(), "users/alice/syncRuns/s1/items/5")));
   });
+  it("avisos: o usuário lê e só pode marcá-los como lidos", async () => {
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      await setDoc(doc(ctx.firestore(), "users/alice/notifications/wantlist-erro"), { mensagem: "Falha", lida: false });
+    });
+    const ref = doc(alice(), "users/alice/notifications/wantlist-erro");
+    await assertSucceeds(getDoc(ref));
+    await assertSucceeds(updateDoc(ref, { lida: true }));
+    await assertFails(updateDoc(ref, { mensagem: "outra" }));
+    await assertFails(deleteDoc(ref));
+    await assertFails(setDoc(doc(alice(), "users/alice/notifications/novo"), { mensagem: "x", lida: false }));
+    await assertFails(getDoc(doc(bob(), "users/alice/notifications/wantlist-erro")));
+  });
+  it("Quero Conhecer: o usuário lê e exclui, mas só o servidor cria", async () => {
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      await setDoc(doc(ctx.firestore(), "users/alice/discover/5"), { titulo: "Disco" });
+    });
+    await assertSucceeds(getDoc(doc(alice(), "users/alice/discover/5")));
+    await assertFails(setDoc(doc(alice(), "users/alice/discover/6"), { titulo: "Outro" }));
+    await assertFails(updateDoc(doc(alice(), "users/alice/discover/5"), { titulo: "Trocado" }));
+    await assertSucceeds(deleteDoc(doc(alice(), "users/alice/discover/5")));
+  });
   it("estado da integração com o Discogs: o usuário lê, mas não grava", async () => {
     await env.withSecurityRulesDisabled(async (ctx) => {
       await setDoc(doc(ctx.firestore(), "users/alice/integrations/discogs"), { username: "alice_discogs" });

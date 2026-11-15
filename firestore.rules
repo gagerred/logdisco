@@ -67,6 +67,13 @@ service cloud.firestore {
         allow update, delete: if false;
       }
 
+      // Avisos do sistema (ex.: falha na atualização automática): o usuário lê e marca como lido.
+      match /notifications/{id} {
+        allow read: if dono(uid);
+        allow update: if dono(uid) && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['lida']);
+        allow create, delete: if false;
+      }
+
       // Estado da integração com o Discogs (usuário, data): o usuário só lê.
       match /integrations/{id} { allow read: if dono(uid); allow write: if false; }
 

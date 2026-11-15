@@ -59,6 +59,11 @@ export class DiscogsClient {
     );
   }
 
+  /** Uma página (até 100 itens) da lista de desejos (wantlist) do usuário. */
+  listarWantlist(username: string, pagina: number): Promise<PaginaBruta> {
+    return this.get<PaginaBruta>(`/users/${encodeURIComponent(username)}/wants?page=${pagina}&per_page=100`);
+  }
+
   identidade(): Promise<{ id: number; username: string }> {
     return this.get<{ id: number; username: string }>("/oauth/identity");
   }

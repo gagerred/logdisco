@@ -10,6 +10,8 @@ import Link from "next/link";
 import { normalizarCodigoRelease } from "@/lib/discogs/codigo";
 import { ROTULO_STATUS } from "@/lib/sync/tipos";
 import { formatarMomento, useUltimaSincronizacao } from "@/lib/sync/use-sync";
+import { ROTULO_STATUS_WANTLIST } from "@/lib/wantlist/tipos";
+import { useRunsWantlist } from "@/lib/wantlist/use-wantlist";
 import type { ReleaseDoc } from "@/lib/discogs/release";
 import { CartaoRelease } from "./CartaoRelease";
 
@@ -31,6 +33,7 @@ export function SecaoDiscogs({ user }: { user: User }) {
   const [erroConsulta, setErroConsulta] = useState<string | null>(null);
   const [release, setRelease] = useState<ReleaseDoc | null>(null);
   const ultimaSync = useUltimaSincronizacao();
+  const runsDesejos = useRunsWantlist();
 
   useEffect(
     () =>
@@ -117,6 +120,15 @@ export function SecaoDiscogs({ user }: { user: User }) {
             <strong>{ultimaSync === undefined ? "…" : ultimaSync ? `${formatarMomento(ultimaSync.concluidaEm)} · ${ROTULO_STATUS[ultimaSync.status]}` : "nenhuma realizada ainda"}</strong>
             {" · "}
             <Link href="/colecao/sincronizacoes" className="font-semibold underline underline-offset-2">Histórico</Link>
+          </p>
+          <p className="mt-1 text-sm">
+            Última atualização da lista de desejos:{" "}
+            <strong>
+              {runsDesejos === undefined ? "…" : runsDesejos.concluida ? `${formatarMomento(runsDesejos.concluida.concluidaEm)} (${runsDesejos.concluida.origem === "automatica" ? "automática" : "manual"})` : "nenhuma ainda"}
+            </strong>
+            {runsDesejos?.ultima && runsDesejos.ultima.status !== "concluida" && <> · última tentativa: {ROTULO_STATUS_WANTLIST[runsDesejos.ultima.status]}</>}
+            {" · "}
+            <Link href="/desejos" className="font-semibold underline underline-offset-2">Lista de desejos</Link>
           </p>
           <p className="mt-1 text-xs text-verde-700">
             Para revogar totalmente o acesso, remova o LogDisco também nos aplicativos autorizados da sua conta no Discogs.

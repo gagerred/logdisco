@@ -13,7 +13,8 @@ const album = (id: string, titulo: string, artista: string, status: "active" | "
 describe("converterItemBasico", () => {
   it("lê identificação, artista, formato, categoria e capa", () => {
     expect(converterItemBasico(bruto(10, "Abbey Road", "The Beatles"))).toEqual({
-      id: 10, titulo: "Abbey Road", artista: "The Beatles", formatoOriginal: "Vinyl", categoria: "Vinyl", capa: "https://i.discogs.com/10.jpg",
+      id: 10, titulo: "Abbey Road", artista: "The Beatles", artistas: [{ id: 100, name: "The Beatles" }], formatos: ["Vinyl"],
+      formatoOriginal: "Vinyl", categoria: "Vinyl", capa: "https://i.discogs.com/10.jpg",
     });
   });
   it("tira o sufixo de homônimo e usa a capa grande quando não há miniatura", () => {

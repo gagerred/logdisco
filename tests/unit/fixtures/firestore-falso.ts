@@ -64,12 +64,17 @@ class ConsultaFalsa {
     protected pasta: string,
     protected filtros: Filtro[] = [],
     protected maximo?: number,
+    protected ordem?: { campo: string; dir: "asc" | "desc" },
   ) {}
   where(campo: string, op: "==" | "in", valor: unknown) {
-    return new ConsultaFalsa(this.db, this.pasta, [...this.filtros, { campo, op, valor }], this.maximo);
+    return new ConsultaFalsa(this.db, this.pasta, [...this.filtros, { campo, op, valor }], this.maximo, this.ordem);
   }
   limit(n: number) {
-    return new ConsultaFalsa(this.db, this.pasta, this.filtros, n);
+    return new ConsultaFalsa(this.db, this.pasta, this.filtros, n, this.ordem);
+  }
+  /** Como no Firestore, documentos sem o campo ficam de fora de uma consulta ordenada por ele. */
+  orderBy(campo: string, dir: "asc" | "desc" = "asc") {
+    return new ConsultaFalsa(this.db, this.pasta, this.filtros, this.maximo, { campo, dir });
   }
   select(..._campos: string[]) {
     return this;
@@ -83,8 +88,18 @@ class ConsultaFalsa {
         return f.op === "==" ? v === f.valor : (f.valor as unknown[]).includes(v);
       });
     }
-    // O Firestore devolve os documentos ordenados pelo ID.
-    lista.sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0));
+    if (this.ordem) {
+      const { campo, dir } = this.ordem;
+      lista = lista.filter(([, d]) => (d as Dados)[campo] !== undefined);
+      lista.sort(([, a], [, b]) => {
+        const x = (a as Dados)[campo] as number | string;
+        const y = (b as Dados)[campo] as number | string;
+        return (x < y ? -1 : x > y ? 1 : 0) * (dir === "desc" ? -1 : 1);
+      });
+    } else {
+      // Sem ordenação explícita, o Firestore devolve os documentos pelo ID.
+      lista.sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0));
+    }
     return this.maximo === undefined ? lista : lista.slice(0, this.maximo);
   }
   async get() {
