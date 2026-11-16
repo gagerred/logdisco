@@ -71,7 +71,12 @@ Legenda: `[x]` implementado e testado · `[~]` implementado, falta validar com o
 - [x] Lista independente: nada é adicionado à coleção nem à lista de desejos (7) — testado
 
 ## 11. Relatórios
-- [ ] 11.1 Gerais · 11.2 Anuais · 11.3 Por tipo de mídia · 11.4 Apresentação (8)
+- [~] 11.1 Relatórios gerais: artistas mais ouvidos, álbuns mais ouvidos, nunca ouvidos, audições dos últimos 30/60/90/180 dias, total de álbuns na coleção ativa e álbuns por formato (8) — cálculos testados; telas testadas com dados de exemplo
+- [x] 11.1 Todas as contagens usam a data efetiva da audição, e não a data do registro (8) — testado
+- [~] 11.2 Estatísticas anuais com seleção de ano: artistas e discos mais ouvidos, total de discos ouvidos (álbuns distintos) e total de audições (registros), com gráfico por mês (8)
+- [~] 11.3 Relatório por tipo de mídia, pelo formato atual do álbum; ao tocar em um tipo, lista de artista, álbum, data e horário (8)
+- [~] 11.4 Apresentação com indicadores, barras e listas; títulos quebram em várias linhas no celular, sem rolagem horizontal (8) — falta conferir em um celular de verdade
+- [x] 8.3 Álbum removido da coleção ativa não conta como "nunca ouvido", e suas audições continuam nos rankings e nas contagens (8) — testado
 
 ## 12. Sorteio
 - [~] Sortear disco com filtros dos grupos A e B, independentes e opcionais (5) — lógica testada; "Somente CD" não inclui CD/DVD
