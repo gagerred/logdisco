@@ -85,8 +85,15 @@ Legenda: `[x]` implementado e testado · `[~]` implementado, falta validar com o
 - [~] Botão de letra por faixa (4) · artista por faixa em álbuns "Various" (4)
 
 ## 15–16. CSV, backup e histórico
-- [ ] Exportar e importar CSV com prévia e validação (9)
-- [ ] Cópia de segurança (9) · Histórico de alterações (9)
+> **Alteração pedida pelo usuário (16/11/2026):** o CSV passa a conter apenas as audições (a coleção não é importada nem exportada em CSV), com as colunas `discogs_id`, `date` e `time`, nessa ordem. Isso substitui os itens 15.1 e 15.2 do PDF, que previam CSV da coleção e campos adicionais. A cópia de segurança (16.1) continua incluindo a coleção.
+- [~] 15.1 Exportar as audições em CSV: `discogs_id;date;time`, UTF-8 com BOM, uma linha por audição, em ordem cronológica (9) — testado
+- [~] 15.2 Importar audições em CSV: verifica a estrutura e os campos obrigatórios, aceita o código com ou sem R, mostra conferência (prévia) e pede confirmação antes de gravar (9) — testado com banco simulado
+- [~] 15.2 Audição já registrada (mesmo release, data e horário) é ignorada, inclusive repetida no próprio arquivo (9) — testado
+- [~] 15.2 Audição de release que não consta na coleção é indicada ao usuário, agrupada por release e com as linhas do arquivo, e não é importada (9) — testado
+- [~] 15.2 Erros por linha informados antes de importar; importação em partes, sem duplicar ao retomar (9) — testado
+- [~] 16.1 Cópia de segurança em arquivo JSON (coleção, dados dos álbuns, artistas, diário, lista de desejos e Quero Conhecer), para guardar fora do app (9) — testado
+- [~] 16.1 Restauração a partir da cópia: só adiciona, não sobrescreve o que existe, valida cada item e descarta campos desconhecidos (9) — testado
+- [~] 16.2 Histórico de alterações com data, horário, tipo e resumo: inclusão, edição, atualização e remoção de álbuns, sincronizações, atualizações da lista de desejos, importações e restaurações (9) — registros testados; tela testada com dados de exemplo
 
 ## 17. Navegação
 - [~] Navbar no computador e barra inferior fixa no celular com menu "Mais" (2)
@@ -97,7 +104,7 @@ Legenda: `[x]` implementado e testado · `[~]` implementado, falta validar com o
 - [~] Vínculo/desvínculo do Discogs nas Configurações (3)
 - [~] Consulta da última sincronização da coleção (6)
 - [~] Consulta da última atualização da lista de desejos (7)
-- [ ] Importação/exportação, backup (9)
+- [~] Importação e exportação de audições, cópia de segurança e restauração, histórico de alterações (9)
 
 ## 19–21. Integridade, requisitos técnicos e testes
 - [x] 19.2–19.4 Lançamento único por código de Release; edições diferentes ficam separadas (4) — testado
@@ -105,7 +112,7 @@ Legenda: `[x]` implementado e testado · `[~]` implementado, falta validar com o
 - [x] 19.1 / 19.14 Isolamento por usuário nas regras; audições só de álbuns do próprio usuário (5) — regras escritas, teste no emulador pendente de execução
 - [x] 19.8 / 19.13 Exclusão lógica: a remoção na sincronização só marca o álbum como removido e preserva o histórico; reativação também (4, 6) — testado
 - [x] 19.7 / 19.15 A sincronização nunca lê nem grava audições (6) — testado
-- [~] 19.11 Prévia antes de alterar dados: recarregar álbum (4) e sincronização (6); importação CSV (9)
+- [~] 19.11 Prévia antes de alterar dados: recarregar álbum (4) e sincronização (6); importação de audições em CSV (9) e restauração de cópia (9)
 - [~] Chaves só no servidor; `.env*` fora do Git (2)
 - [~] Tarefa agendada no servidor protegida por CRON_SECRET (7)
 - [x] Teste unitário das mensagens de erro de login (2)

@@ -5,6 +5,7 @@ import { DiscogsErro } from "@/lib/discogs/erros";
 import { converterItemBasico, type ItemDiscogs } from "@/lib/sync/plano";
 import { compararWantlist } from "@/lib/wantlist/logica";
 import type { DesejoDoc, ResultadoWantlist, WantlistRunDoc } from "@/lib/wantlist/tipos";
+import { registrar } from "./colecao";
 import { ErroNegocio } from "./erros-negocio";
 import { gravarEmLotes } from "./lotes";
 import { adquirirTrava, liberarTrava } from "./trava";
@@ -126,7 +127,7 @@ export async function atualizarWantlist(uid: string, cliente: DiscogsClient, use
     }
 
     if (total === null || pagina <= total) return { fase: "coletando" as const, runId, pagina: pagina - 1, totalPaginas: total };
-    const resultado = await aplicar(uid, runId, agora);
+    const resultado = await aplicar(uid, runId, agora, op.origem);
     return { fase: "concluida" as const, runId, resultado };
   } catch (e) {
     if (runId) await registrarFalha(uid, runId, e, op.origem);
@@ -137,7 +138,7 @@ export async function atualizarWantlist(uid: string, cliente: DiscogsClient, use
 }
 
 /** Grava a diferença (adicionados, atualizados, removidos) só depois de coletar a wantlist inteira. */
-async function aplicar(uid: string, runId: string, agora: () => number): Promise<ResultadoWantlist> {
+async function aplicar(uid: string, runId: string, agora: () => number, origem: "manual" | "automatica"): Promise<ResultadoWantlist> {
   const db = nuvem();
   const paginas = await db.collection(paginasDe(uid, runId)).get();
   const doDiscogs = paginas.docs.flatMap((d) => (d.data().itens as ItemDiscogs[] | undefined) ?? []);
@@ -173,6 +174,20 @@ async function aplicar(uid: string, runId: string, agora: () => number): Promise
     resultado,
   });
   fim.delete(db.doc(`users/${uid}/notifications/${NOTIFICACAO_ERRO}`)); // a falha anterior foi superada
+  // Só entra no histórico de alterações quando a lista realmente mudou (evita uma linha por semana sem novidade).
+  if (resultado.adicionados + resultado.removidos + resultado.atualizados > 0) {
+    const log = registrar(uid, {
+      tipo: "atualizacao_desejos",
+      origem: origem,
+      resumo: `Lista de desejos atualizada (${origem === "automatica" ? "automática" : "manual"}): ${resultado.adicionados} adicionado(s), ${resultado.removidos} removido(s), ${resultado.atualizados} atualizado(s)`,
+      detalhes: [
+        { campo: "adicionados", rotulo: "Adicionados", de: "", para: String(resultado.adicionados) },
+        { campo: "removidos", rotulo: "Removidos", de: "", para: String(resultado.removidos) },
+        { campo: "atualizados", rotulo: "Atualizados", de: "", para: String(resultado.atualizados) },
+      ],
+    });
+    fim.set(log.ref, log.dados);
+  }
   await fim.commit();
   await limparPaginas(uid, runId);
   return resultado;

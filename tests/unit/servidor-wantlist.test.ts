@@ -84,6 +84,16 @@ describe("atualização da lista de desejos", () => {
     expect(aviso()).toBeUndefined();
   });
 
+  it("registra no histórico de alterações quando a lista muda, e não quando nada mudou", async () => {
+    await atualizarWantlist(UID, discogsFalso().cliente, "u", { origem: "automatica" });
+    const entradas = () => banco.atual.sob(`${raiz}/changeLog`).map(([, d]) => d);
+    expect(entradas()).toHaveLength(1);
+    expect(entradas()[0]).toMatchObject({ tipo: "atualizacao_desejos", origem: "automatica" });
+    expect(String(entradas()[0].resumo)).toContain("3 adicionado(s)");
+    await atualizarWantlist(UID, discogsFalso().cliente, "u", { origem: "manual" }); // igual à anterior
+    expect(entradas()).toHaveLength(1);
+  });
+
   it("NÃO ALTERA coleção, audições nem Quero Conhecer", async () => {
     banco.atual.semear(`${raiz}/discover/9`, { titulo: "Quero ouvir" });
     const antes = preservados(banco.atual);

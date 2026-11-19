@@ -7,12 +7,12 @@ import type { AlbumDoc, DetalheMudanca } from "@/lib/tipos";
 import { ErroNegocio } from "./erros-negocio";
 
 export type EntradaLog = {
-  tipo: "inclusao" | "atualizacao" | "remocao" | "sincronizacao";
+  tipo: "inclusao" | "atualizacao" | "remocao" | "sincronizacao" | "atualizacao_desejos" | "importacao" | "restauracao";
   releaseId?: number;
   resumo: string;
   detalhes?: DetalheMudanca[];
   /** Presente quando a operação veio de uma sincronização. */
-  origem?: "sincronizacao";
+  origem?: "sincronizacao" | "importacao" | "automatica" | "manual";
   syncRunId?: string;
 };
 

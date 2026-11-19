@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import {
   EmailAuthProvider,
@@ -160,6 +161,19 @@ function SecaoDiagnostico({ user }: { user: User }) {
   );
 }
 
+function SecaoDados() {
+  return (
+    <section className="painel">
+      <h2 className="text-lg font-bold text-verde-950">Dados</h2>
+      <p className="mt-1 text-sm text-verde-800">Exporte e importe o diário de audições em CSV, crie ou restaure uma cópia de segurança e consulte o histórico de alterações.</p>
+      <div className="mt-3 flex flex-wrap gap-2">
+        <Link href="/configuracoes/dados" className="btn-primario">Importação, exportação e cópia de segurança</Link>
+        <Link href="/historico" className="btn-contorno">Histórico de alterações</Link>
+      </div>
+    </section>
+  );
+}
+
 export default function Configuracoes() {
   const { user } = useAuth();
   if (!user) return null;
@@ -169,6 +183,7 @@ export default function Configuracoes() {
       <SecaoConta user={user} />
       <SecaoSenha user={user} />
       <SecaoDiscogs user={user} />
+      <SecaoDados />
       <SecaoDiagnostico user={user} />
     </div>
   );

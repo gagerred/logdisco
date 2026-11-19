@@ -50,7 +50,9 @@ export default function Colecao() {
         Última sincronização:{" "}
         {ultima === undefined ? "…" : ultima ? `${formatarMomento(ultima.concluidaEm)} · ${ROTULO_STATUS[ultima.status]}` : "nenhuma realizada ainda"}
         {" · "}
-        <Link href="/colecao/sincronizacoes" className="font-semibold underline underline-offset-2">Histórico</Link>
+        <Link href="/colecao/sincronizacoes" className="font-semibold underline underline-offset-2">Histórico de sincronizações</Link>
+        {" · "}
+        <Link href="/historico" className="font-semibold underline underline-offset-2">Histórico de alterações</Link>
       </p>
 
       {erro && <p role="alert" className="aviso-erro">{erro}</p>}
